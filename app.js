@@ -22,15 +22,15 @@ const server = http.createServer((req, res) => {
 			body.push(chunk)
 		})
 
-		req.on('end', () => {
+		return req.on('end', () => {
 			const parsedBody = Buffer.concat(body).toString()
-			const message = parsedBody.split('=')[1] // splits message=hamza and taking second item in array which is hamza
-			fs.writeFileSync('message.txt', message)
+			const message = parsedBody.split('=')[1].replaceAll('+', ' ') // splits message=hamza and taking second item in array which is hamza
+			fs.writeFile('message.txt', message, (err) => {
+				res.statusCode = 302
+				res.setHeader('Location', '')
+				return res.end()
+			})
 		})
-
-		res.statusCode = 302
-		res.setHeader('Location', '')
-		return res.end()
 	}
 
 	res.setHeader('Content-Type', 'text/html')
