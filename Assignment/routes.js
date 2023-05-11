@@ -3,7 +3,7 @@ const fs = require('fs')
 const requestHandler = (req, res) => {
 	const url = req.url
 	const method = req.method
-    
+
 	if (url === '/') {
 		res.setHeader('Content-Type', 'text/html')
 		res.write('<html>')
@@ -23,11 +23,15 @@ const requestHandler = (req, res) => {
 			body.push(chunk)
 		})
 
-		return req.on('end', () => {
+		req.on('end', () => {
 			const parsedBody = Buffer.concat(body).toString()
 			const user = parsedBody.split('=')[1].replaceAll('+', ' ') // splits message=hamza and taking second item in array which is hamza
 			console.log(user)
 		})
+
+		res.statusCode = 302
+		res.setHeader('Location', '/')
+		res.end()
 	}
 	if (url === '/users') {
 		res.setHeader('Content-Type', 'text/html')
