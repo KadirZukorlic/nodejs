@@ -21,6 +21,7 @@ app.set('views', 'views')
 const adminData = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 
+// parses incoming requests available in req.body
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
