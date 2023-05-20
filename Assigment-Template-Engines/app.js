@@ -8,9 +8,7 @@ const usersData = require('./routes/user')
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(
-	express.static(path.join(__dirname, '/Assigment-Template-Engines/public'))
-)
+app.use(express.static(path.join(__dirname, 'public')))
 
 app.set('view engine', 'ejs')
 app.set('views', 'views')
