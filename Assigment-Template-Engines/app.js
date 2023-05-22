@@ -17,7 +17,7 @@ app.use(usersData.routes)
 
 app.use((req, res, next) => {
 	console.log(usersData.users)
-	res.render('form-assignment', { pageTitle: 'Add User' })
+	res.render('assignments/form-assignment', { pageTitle: 'Add User' })
 })
 
 app.listen(3000)

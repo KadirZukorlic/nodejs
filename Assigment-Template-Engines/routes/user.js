@@ -5,7 +5,7 @@ const router = express.Router()
 const users = []
 
 router.get('/users', (req, res, next) => {
-	res.render('users-assignment', {
+	res.render('assignments/users-assignment', {
 		users: users
 	})
 })
