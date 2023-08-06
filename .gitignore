@@ -1,6 +1,4 @@
 /node_modules
 
-/util/database.js
-
 .env
 .env.test
