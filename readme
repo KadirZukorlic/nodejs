@@ -3,3 +3,5 @@ Local developement
 1. Open MySql in services
 2. run MySql WorkBench
 3. run `npm start`
+
+DB_PASSWORD=Starfallkacobre1!
