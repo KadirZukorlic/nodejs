@@ -16,6 +16,8 @@ const adminRoutes = require('./routes/admin')
 const errorController = require('./controllers/error')
 const shopRoutes = require('./routes/shop')
 const CartItem = require('./models/cart-item')
+const Order = require('./models/order')
+const OrderItem = require('./models/order-item')
 
 // parses incoming requests available in req.body
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -43,6 +45,9 @@ User.hasOne(Cart)
 Cart.belongsTo(User)
 Cart.belongsToMany(Product, { through: CartItem })
 Product.belongsToMany(Cart, { through: CartItem })
+Order.belongsTo(User)
+User.hasMany(Order)
+Order.belongsToMany(Product, { through: OrderItem })
 
 // Sequalize create tables
 sequelize
