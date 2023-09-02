@@ -1,5 +1,5 @@
 /node_modules
-/util/database.js
+util/database.js
 
 .env
 .env.test
