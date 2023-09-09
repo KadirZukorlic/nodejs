@@ -1,19 +1,27 @@
-const getDb = require('../util/database').getDb
-var ObjectId = require('mongodb').ObjectId
+const { getDb } = require('../util/database')
+const { ObjectId } = require('mongodb')
 
 class Product {
-	constructor(title, price, description, imageUrl) {
+	constructor(title, price, description, imageUrl, id) {
 		this.title = title
 		this.price = price
 		this.description = description
 		this.imageUrl = imageUrl
+		this._id = id
 	}
 
 	save() {
 		const db = getDb()
-		return db
-			.collection('products')
-			.insertOne(this)
+		let dbOp // db operation
+		if (this._id) {
+			// update the product
+			dbOp = db
+				.collection('products')
+				.updateOne({ _id: new ObjectId(this._id) }, { $set: this }) // this refers (call-site) to constructor properties; for example: we could say { $set: { title: this.title, description: this.description } } ... but as we want to pass all the arguments we set it to `this`
+		} else {
+			dbOp = db.collection('products').insertOne(this)
+		}
+		return dbOp
 			.then((result) => {
 				console.log(result)
 			})
