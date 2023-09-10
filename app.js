@@ -14,19 +14,19 @@ const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 
 const mongoConnect = require('./util/database').mongoConnect
+const User = require('./models/user')
 
 // parses incoming requests available in req.body
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use((req, res, next) => {
-	// User.findByPk(1)
-	// 	.then((user) => {
-	// 		req.user = user
-	// 		next()
-	// 	})
-	// 	.catch((err) => console.log(err))
-	next()
+	User.findById('64fd172ba15c42dc1453f362')
+		.then((user) => {
+			req.user = user
+			next()
+		})
+		.catch((err) => console.log(err))
 })
 
 app.use('/admin', adminRoutes)

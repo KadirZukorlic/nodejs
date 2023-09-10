@@ -1,18 +1,34 @@
-// id, name, last name, email
+const { ObjectId } = require('mongodb')
+const { getDb } = require('../util/database')
 
-const Sequelize = require('sequelize')
+class User {
+	constructor(username, email) {
+		this.name = username
+		this.email = email
+	}
 
-const sequalize = require('../util/database')
+	save() {
+		const db = getDb()
+		return db
+			.collection('users')
+			.insertOne(this)
+			.then(() => {
+				console.log('user created')
+			})
+			.catch((err) => console.log(err))
+	}
 
-const User = sequalize.define('user', {
-	id: {
-		type: Sequelize.INTEGER,
-		autoIncrement: true,
-		allowNull: false,
-		primaryKey: true
-	},
-	name: Sequelize.STRING,
-	email: Sequelize.STRING
-})
+	static findById(userId) {
+		const db = getDb()
+		return db
+			.collection('users')
+			.findOne({ _id: new ObjectId(userId) })
+			.then((user) => {
+				console.log(user, 'user')
+				return user
+			})
+			.catch((err) => console.log(err))
+	}
+}
 
 module.exports = User
