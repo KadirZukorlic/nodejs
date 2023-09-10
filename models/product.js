@@ -7,7 +7,7 @@ class Product {
 		this.price = price
 		this.description = description
 		this.imageUrl = imageUrl
-		this._id = id
+		this._id = new ObjectId(id)
 	}
 
 	save() {
@@ -17,7 +17,7 @@ class Product {
 			// update the product
 			dbOp = db
 				.collection('products')
-				.updateOne({ _id: new ObjectId(this._id) }, { $set: this }) // this refers (call-site) to constructor properties; for example: we could say { $set: { title: this.title, description: this.description } } ... but as we want to pass all the arguments we set it to `this`
+				.updateOne({ _id: this._id }, { $set: this }) // this refers (call-site) to constructor properties; for example: we could say { $set: { title: this.title, description: this.description } } ... but as we want to pass all the arguments we set it to `this`
 		} else {
 			dbOp = db.collection('products').insertOne(this)
 		}
