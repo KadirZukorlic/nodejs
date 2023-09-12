@@ -27,8 +27,6 @@ class User {
 		let newQuantity = 1
 		const updatedCartItems = [...this.cart.items]
 
-		console.log(cartProductIndex, 'CART PRODUCT INDEXXX')
-
 		if (cartProductIndex >= 0) {
 			newQuantity = this.cart.items[cartProductIndex].quantity + 1
 			updatedCartItems[cartProductIndex].quantity = newQuantity
@@ -67,6 +65,20 @@ class User {
 					}
 				})
 			})
+	}
+
+	deleteItemFromCart(productId) {
+		const updatedCartItems = this.cart.items.filter((item) => {
+			return item.productId.toString() !== productId.toString()
+		})
+
+		const db = getDb()
+		return db
+			.collection('users')
+			.updateOne(
+				{ _id: new ObjectId(this._id) },
+				{ $set: { cart: { items: updatedCartItems } } }
+			)
 	}
 
 	static findById(userId) {
