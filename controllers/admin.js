@@ -75,7 +75,10 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
 	Product.find()
+		// .select('title price imageUrl -_id') control which fields are returned
+		// .populate('userId', 'name') populate related fields
 		.then((products) => {
+			console.log(products, 'PRODUCTS')
 			res.render('admin/products', {
 				prods: products,
 				pageTitle: 'Admin Products',
