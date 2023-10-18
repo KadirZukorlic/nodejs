@@ -37,14 +37,17 @@ app.use(
 	})
 )
 
-// app.use((req, res, next) => {
-// 	User.findById('651a002106390654b5397449')
-// 		.then((user) => {
-// 			req.user = user
-// 			next()
-// 		})
-// 		.catch((err) => console.log(err))
-// })
+app.use((req, res, next) => {
+	if (!req.session.user) {
+		return next()
+	}
+	User.findById(req.session.user._id)
+		.then((user) => {
+			req.user = user
+			next()
+		})
+		.catch((err) => console.log(err))
+})
 
 app.use('/admin', adminRoutes)
 app.use(shopRoutes)

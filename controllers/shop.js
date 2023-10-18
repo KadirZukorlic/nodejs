@@ -12,12 +12,14 @@ exports.getProducts = (req, res, next) => {
 				isAuthenticated: req.session.isLoggedIn
 			})
 		})
-		.catch((err) => console.log(err))
+		.catch((err) => {
+			console.log(err)
+		})
 }
 
 exports.getProduct = (req, res, next) => {
 	const prodId = req.params.productId
-	Product.findById(prodId) // mongoose converts prodId of type string into ObjectId type
+	Product.findById(prodId)
 		.then((product) => {
 			res.render('shop/product-detail', {
 				product: product,
@@ -39,12 +41,15 @@ exports.getIndex = (req, res, next) => {
 				isAuthenticated: req.session.isLoggedIn
 			})
 		})
-		.catch((err) => console.log(err))
+		.catch((err) => {
+			console.log(err)
+		})
 }
 
 exports.getCart = (req, res, next) => {
 	req.user
 		.populate('cart.items.productId')
+		// .execPopulate()
 		.then((user) => {
 			const products = user.cart.items
 			res.render('shop/cart', {
@@ -58,16 +63,15 @@ exports.getCart = (req, res, next) => {
 }
 
 exports.postCart = (req, res, next) => {
-	const prodId = req.body.productId // productId is name on hidden input
+	const prodId = req.body.productId
 	Product.findById(prodId)
 		.then((product) => {
 			return req.user.addToCart(product)
 		})
 		.then((result) => {
-			res.redirect('/cart')
 			console.log(result)
+			res.redirect('/cart')
 		})
-		.catch((err) => console.log(err))
 }
 
 exports.postCartDeleteProduct = (req, res, next) => {
@@ -75,51 +79,35 @@ exports.postCartDeleteProduct = (req, res, next) => {
 	req.user
 		.removeFromCart(prodId)
 		.then((result) => {
-			console.log(result, 'RESULT IN CART DELETE')
 			res.redirect('/cart')
 		})
-		.catch((error) => {
-			console.log(error)
-		})
-}
-
-exports.getCheckout = (req, res, next) => {
-	res.render('shop/checkout', {
-		path: '/checkout',
-		pageTitle: 'Checkout',
-		isAuthenticated: req.session.isLoggedIn
-	})
+		.catch((err) => console.log(err))
 }
 
 exports.postOrder = (req, res, next) => {
 	req.user
 		.populate('cart.items.productId')
+		.execPopulate()
 		.then((user) => {
-			console.log(user.cart.items)
 			const products = user.cart.items.map((i) => {
-				return {
-					quantity: i.quantity,
-					product: { ...i.productId._doc } // ._doc gets only the real data without metadata which are not seen in the console.log
-				}
+				return { quantity: i.quantity, product: { ...i.productId._doc } }
 			})
 			const order = new Order({
 				user: {
 					name: req.user.name,
-					userId: req.user // mongoose will pick req.user._id from the user object
+					userId: req.user
 				},
 				products: products
 			})
-			order.save()
+			return order.save()
 		})
-		.then(() => {
+		.then((result) => {
 			return req.user.clearCart()
 		})
 		.then(() => {
 			res.redirect('/orders')
 		})
-		.catch((error) => {
-			console.log(error)
-		})
+		.catch((err) => console.log(err))
 }
 
 exports.getOrders = (req, res, next) => {
@@ -132,5 +120,5 @@ exports.getOrders = (req, res, next) => {
 				isAuthenticated: req.session.isLoggedIn
 			})
 		})
-		.catch((error) => console.log(error))
+		.catch((err) => console.log(err))
 }
