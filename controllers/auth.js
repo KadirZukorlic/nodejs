@@ -84,6 +84,7 @@ exports.postLogout = (req, res, next) => {
 	})
 }
 
+// TODO: Create reset password logic
 exports.getReset = (req, res, next) => {
 	res.render('auth/reset', {
 		path: '/reset',
