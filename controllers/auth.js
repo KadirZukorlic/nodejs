@@ -1,5 +1,6 @@
 const User = require('../models/user')
 
+const crypto = require('crypto')
 const bcrypt = require('bcryptjs')
 
 exports.getLogin = (req, res, next) => {
@@ -90,5 +91,31 @@ exports.getReset = (req, res, next) => {
 		path: '/reset',
 		pageTitle: 'Reset Password',
 		errorMessage: req.flash('error')
+	})
+}
+
+exports.postReset = (req, res, next) => {
+	crypto.randomBytes(32, (err, buffer) => {
+		if (err) {
+			console.log(err)
+			return res.redirect('/reset')
+		}
+		const token = buffer.toString('hex')
+		User.findOne({ email: req.body.email })
+			.then((user) => {
+				if (!user) {
+					req.flash('error', 'No account with that email found.')
+					return res.redirect('/reset')
+				}
+				user.resetToken = token
+				user.resetTokenExpiration = Date.now() + 3600000
+				return user.save()
+			})
+			.then((result) => {
+				// Use some external resource to send a email like: SendGrid (which doesn't work for my account atm)
+			})
+			.catch((err) => {
+				console.log(err)
+			})
 	})
 }
