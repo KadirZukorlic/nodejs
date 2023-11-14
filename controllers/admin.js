@@ -40,7 +40,6 @@ exports.postAddProduct = (req, res, next) => {
 	}
 
 	const product = new Product({
-		_id: new mongoose.Types.ObjectId('6535b4a482471e839b3c17c8'),
 		title: title,
 		price: price,
 		description: description,
@@ -69,7 +68,10 @@ exports.postAddProduct = (req, res, next) => {
 			// 	errorMessage: 'Database operation failed, please try again.',
 			// 	validationErrors: []
 			// })
-			res.redirect('/500')
+			// res.redirect('/500')
+			const error = new Error(err)
+			error.httpStatusCode = 500
+			return next(error)
 		})
 }
 
@@ -80,20 +82,26 @@ exports.getEditProduct = (req, res, next) => {
 	}
 
 	const prodId = req.params.productId
-	Product.findById(prodId).then((product) => {
-		if (!product) {
-			return res.redirect('/')
-		}
-		res.render('admin/edit-product', {
-			pageTitle: 'Edit Product',
-			path: '/admin/edit-product',
-			editing: editMode,
-			product: product,
-			hasError: false,
-			errorMessage: null,
-			validationErrors: []
+	Product.findById(prodId)
+		.then((product) => {
+			if (!product) {
+				return res.redirect('/')
+			}
+			res.render('admin/edit-product', {
+				pageTitle: 'Edit Product',
+				path: '/admin/edit-product',
+				editing: editMode,
+				product: product,
+				hasError: false,
+				errorMessage: null,
+				validationErrors: []
+			})
 		})
-	})
+		.catch((err) => {
+			const error = new Error(err)
+			error.httpStatusCode = 500
+			return next(error)
+		})
 }
 
 exports.postEditProduct = (req, res, next) => {
@@ -142,7 +150,11 @@ exports.postEditProduct = (req, res, next) => {
 			})
 		})
 
-		.catch((err) => console.log(err))
+		.catch((err) => {
+			const error = new Error(err)
+			error.httpStatusCode = 500
+			return next(error)
+		})
 }
 
 exports.getProducts = (req, res, next) => {
@@ -157,7 +169,11 @@ exports.getProducts = (req, res, next) => {
 				path: '/admin/products'
 			})
 		})
-		.catch((err) => console.log(err))
+		.catch((err) => {
+			const error = new Error(err)
+			error.httpStatusCode = 500
+			return next(error)
+		})
 }
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -167,7 +183,11 @@ exports.postDeleteProduct = (req, res, next) => {
 		.then(() => {
 			res.redirect('/admin/products')
 		})
-		.catch((err) => console.log(err))
+		.catch((err) => {
+			const error = new Error(err)
+			error.httpStatusCode = 500
+			return next(error)
+		})
 	res.redirect('/admin/products')
 }
 
@@ -180,5 +200,9 @@ exports.getOrders = (req, res, next) => {
 				orders: orders
 			})
 		})
-		.catch((error) => console.log(error))
+		.catch((err) => {
+			const error = new Error(err)
+			error.httpStatusCode = 500
+			return next(error)
+		})
 }
