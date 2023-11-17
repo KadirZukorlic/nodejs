@@ -9,6 +9,7 @@ const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const csrf = require('csurf')
 const flash = require('connect-flash')
+const multer = require('multer')
 
 const app = express()
 const store = new MongoDBStore({
@@ -16,6 +17,27 @@ const store = new MongoDBStore({
 	collection: 'sessions'
 })
 const csrfProtection = csrf()
+
+const fileStorage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, 'images')
+	},
+	filename: (req, file, cb) => {
+		cb(null, 'image' + '-' + file.originalname)
+	}
+})
+
+const fileFilter = (req, file, cb) => {
+	if (
+		file.mimetype === 'image/png' ||
+		file.mimetype === 'image/jpg' ||
+		file.mimetype === 'image/jpeg'
+	) {
+		cb(null, true)
+	} else {
+		cb(null, false)
+	}
+}
 
 app.set('view engine', 'ejs')
 app.set('views', 'views')
@@ -30,6 +52,9 @@ const User = require('./models/user')
 
 // parses incoming requests available in req.body
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(
+	multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+)
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(
 	session({
