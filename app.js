@@ -23,6 +23,7 @@ const fileStorage = multer.diskStorage({
 		cb(null, 'images')
 	},
 	filename: (req, file, cb) => {
+		// use new Date().toISOString() to get a unique name, it fails for now dont know why
 		cb(null, 'image' + '-' + file.originalname)
 	}
 })
@@ -56,6 +57,7 @@ app.use(
 	multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
 )
 app.use(express.static(path.join(__dirname, 'public')))
+app.use('/images', express.static(path.join(__dirname, 'images')))
 app.use(
 	session({
 		secret: 'my secret',
